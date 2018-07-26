@@ -1,0 +1,82 @@
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle('statikbe\\cta\\utilities\\CpAssetBundle') %}
+
+{% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
+{% set hasSettings = settings.allowCustomText or settings.allowTarget %}
+
+<div class="linkfield{% if hasSettings %} withSettings{% endif %}" id="{{ name }}">
+  {% if linkNames|length == 0 %}
+    <p>{{ 'No link types available.'|t('cta') }}</p>
+  {% else %}
+    <div class="linkfield--field field">
+      {% if singleType %}
+        <input type="hidden" id="{{ name }}-type" name="{{ name }}[type]" value="{{ type }}" />
+      {% else %}
+        <div class="linkfield--type">
+          {{ forms.select({
+            id: name~'-Type',
+            name: name~'[type]',
+            options: linkNames,
+            value: type
+          }) }}
+        </div>
+      {% endif %}
+
+      <div class="linkfield--typeOptions{% if singleType %} single{% endif %}">
+        {{ linkInputs|raw }}
+      </div>
+    </div>
+    {% if hasSettings %}
+      <div class="linkfield--settings{{ type == '' ? ' hidden' }}" style="display: flex; justify-content: space-between; flex-direction: row; align-items: center;  ">
+        <style>
+          .cta__input {
+            padding: 0 3px;
+            margin: 0;
+          }
+        </style>
+        <div class="cta__input field">
+          <div class="heading">
+            <label id="fields-ctaLink-customText-label" for="{{ name~'class' }}">Class</label>
+          </div>
+          {{ forms.select({
+              id: name~'class',
+              name: name~'[class]',
+              options: classes,
+              value: class
+          }) }}
+        </div>
+        {% if settings.allowCustomText %}
+          <div class="cta__input" style="flex-grow: 1;">
+          {{ forms.textField({
+            id: name~'-customText',
+            name: name~'[customText]',
+            placeholder: settings.defaultText == '' ? 'Custom link text'|t('cta') : settings.defaultText|t('site'),
+            label: 'Custom link text'|t('cta'),
+            value: value.customText is defined and value.customText ? value.customText
+          }) }}
+        </div>
+        {% endif %}
+
+        {% if settings.allowTarget %}
+          <div class="cta__input" style="margin-top: 25px;">
+          {{ forms.checkboxField({
+            id: name~'-Target',
+            name: name~'[target]',
+            value: '_blank',
+            label: 'Open in new window?'|t('cta'),
+            checked: value.target is defined and value.target == '_blank' ? true : null
+          }) }}
+        </div>
+        {% endif %}
+
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
+</div>
+
+{% js %}
+  new LinkField("{{ nameNs }}");
+{% endjs %}
