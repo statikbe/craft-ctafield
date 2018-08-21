@@ -299,7 +299,7 @@ class CTAField extends Field
      * @return bool
      */
     public function isValueEmpty($value, ElementInterface $element): bool {
-        if ($value instanceof Link) {
+        if ($value instanceof \statikbe\cta\models\CTA) {
             return $value->isEmpty();
         }
 
