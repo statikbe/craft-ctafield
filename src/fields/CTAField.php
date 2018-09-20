@@ -205,13 +205,17 @@ class CTAField extends Field
 
         asort($linkNames);
 
-        $classes = [
-            'btn'                   => 'Primary',
-            'btn btn--secondary'    => 'Secondary',
-            'btn btn--ghost'        => 'Ghost',
-            'link link--ext'        => 'Link >',
-            'link'                  => 'Link'
-        ];
+        if(CTA::$plugin->getSettings()->classes) {
+            $classes = CTA::$plugin->getSettings()->classes;
+        } else {
+            $classes = [
+                'btn'                   => 'Primary',
+                'btn btn--secondary'    => 'Secondary',
+                'btn btn--ghost'        => 'Ghost',
+                'link link--ext'        => 'Link >',
+                'link'                  => 'Link'
+            ];
+        }
         return \Craft::$app->getView()->renderTemplate('cta/_input', [
             'linkInputs' => implode('', $linkInputs),
             'linkNames'  => $linkNames,

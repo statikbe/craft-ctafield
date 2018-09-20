@@ -60,6 +60,23 @@ will be used as the link content.
 }) }}
 ```
 
+## Custom classes
+Add custum classes to the dropdown menu.
+
+1. Add cta.php to /config
+2. Declare your classes:
+```
+<?php
+
+return [
+    'classes' => [
+        'btn'                   => 'Primary',
+        'btn btn--secondary'    => 'Secondary'
+    ]
+];
+```
+
+
 ## Credits
 
 Heavily inspired by [sebastian-lenz/craft-linkfield](https://github.com/sebastian-lenz/craft-linkfield/blob/master/README.md).
