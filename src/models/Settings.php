@@ -30,6 +30,8 @@ class Settings extends Model
      */
     public $someAttribute = 'Some Default';
 
+    public $classes = [];
+
     // Public Methods
     // =========================================================================
 

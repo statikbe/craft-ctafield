@@ -183,5 +183,10 @@ class CTA extends Plugin
         $event->types[] = LinkField::class;
     }
 
+    protected function createSettingsModel()
+    {
+        return new Settings();
+    }
+
    
 }
