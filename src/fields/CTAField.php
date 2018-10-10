@@ -74,7 +74,8 @@ class CTAField extends Field
      * @param bool $isNew
      * @return bool
      */
-    public function beforeSave(bool $isNew): bool {
+    public function beforeSave(bool $isNew): bool
+    {
         if (is_array($this->allowedLinkNames)) {
             $this->allowedLinkNames = array_filter($this->allowedLinkNames);
             foreach ($this->allowedLinkNames as $linkName) {
@@ -95,7 +96,8 @@ class CTAField extends Field
      * Used to set the correct column type in the DB
      * @return string
      */
-    public function getContentColumnType(): string {
+    public function getContentColumnType(): string
+    {
         return Schema::TYPE_TEXT;
     }
 
@@ -104,16 +106,17 @@ class CTAField extends Field
      * @param ElementInterface|null $element
      * @return Link
      */
-    public function normalizeValue($value, ElementInterface $element = null) {
+    public function normalizeValue($value, ElementInterface $element = null)
+    {
         if ($value instanceof \statikbe\cta\models\CTA) {
             return $value;
         }
 
         $attr = [
             'allowCustomText' => $this->allowCustomText,
-            'allowTarget'     => $this->allowTarget,
-            'defaultText'     => $this->defaultText,
-            'owner'           => $element,
+            'allowTarget' => $this->allowTarget,
+            'defaultText' => $this->defaultText,
+            'owner' => $element,
         ];
 
         // If value is a string we are loading the data from the database
@@ -121,7 +124,7 @@ class CTAField extends Field
             $attr += array_filter(
                 json_decode($value, true) ?: [],
                 function ($key) {
-                    return in_array($key, [ 'customText', 'target', 'type', 'value', 'class' ]);
+                    return in_array($key, ['customText', 'target', 'type', 'value', 'class']);
                 },
                 ARRAY_FILTER_USE_KEY
             );
@@ -130,10 +133,10 @@ class CTAField extends Field
         } else if (is_array($value) && isset($value['isCpFormData'])) {
             $attr += [
                 'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
-                'target'     => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
-                'type'       => isset($value['type']) ? $value['type'] : null,
-                'class'       => $value['class'],
-                'value'      => $this->getLinkValue($value)
+                'target' => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
+                'type' => isset($value['type']) ? $value['type'] : null,
+                'class' => $value['class'],
+                'value' => $this->getLinkValue($value)
             ];
 
             // Finally, if it is an array it is a serialized value
@@ -144,7 +147,7 @@ class CTAField extends Field
         }
 
         if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
-            $attr['type']  = null;
+            $attr['type'] = null;
             $attr['value'] = null;
         }
 
@@ -154,7 +157,8 @@ class CTAField extends Field
     /**
      * @return LinkTypeInterface[]
      */
-    public function getAllowedLinkTypes() {
+    public function getAllowedLinkTypes()
+    {
         $allowedLinkNames = $this->allowedLinkNames;
         $linkTypes = CTA::getInstance()->getLinkTypes();
 
@@ -166,7 +170,7 @@ class CTAField extends Field
             $allowedLinkNames = [$allowedLinkNames];
         }
 
-        return array_filter($linkTypes, function($linkTypeName) use ($allowedLinkNames) {
+        return array_filter($linkTypes, function ($linkTypeName) use ($allowedLinkNames) {
             return in_array($linkTypeName, $allowedLinkNames);
         }, ARRAY_FILTER_USE_KEY);
     }
@@ -174,7 +178,8 @@ class CTAField extends Field
     /**
      * @return array
      */
-    public function getElementValidationRules(): array {
+    public function getElementValidationRules(): array
+    {
         return [
             [LinkFieldValidator::class, 'field' => $this],
         ];
@@ -187,7 +192,8 @@ class CTAField extends Field
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    public function getInputHtml($value, ElementInterface $element = null): string {
+    public function getInputHtml($value, ElementInterface $element = null): string
+    {
         $linkTypes = $this->getAllowedLinkTypes();
         $linkNames = [];
         $linkInputs = [];
@@ -216,14 +222,14 @@ class CTAField extends Field
 
         return \Craft::$app->getView()->renderTemplate('cta/_input', [
             'linkInputs' => implode('', $linkInputs),
-            'linkNames'  => $linkNames,
-            'classes'    => $this->getClasses(),
-            'class'      => $value->class,
-            'name'       => $this->handle,
-            'nameNs'     => \Craft::$app->view->namespaceInputId($this->handle),
-            'settings'   => $this->getSettings(),
+            'linkNames' => $linkNames,
+            'classes' => $this->getClasses(),
+            'class' => $value->class,
+            'name' => $this->handle,
+            'nameNs' => \Craft::$app->view->namespaceInputId($this->handle),
+            'settings' => $this->getSettings(),
             'singleType' => $singleType,
-            'value'      => $value,
+            'value' => $value,
         ]);
     }
 
@@ -232,7 +238,8 @@ class CTAField extends Field
      * @param LinkTypeInterface $linkType
      * @return array
      */
-    public function getLinkTypeSettings(string $linkTypeName, LinkTypeInterface $linkType): array {
+    public function getLinkTypeSettings(string $linkTypeName, LinkTypeInterface $linkType): array
+    {
         $settings = $linkType->getDefaultSettings();
         if (array_key_exists($linkTypeName, $this->typeSettings)) {
             $settings = $this->typeSettings[$linkTypeName] + $settings;
@@ -241,16 +248,17 @@ class CTAField extends Field
         return $settings;
     }
 
-    public function getClasses() {
-        if(CTA::$plugin->getSettings()->classes) {
+    public function getClasses()
+    {
+        if (CTA::$plugin->getSettings()->classes) {
             $classes = CTA::$plugin->getSettings()->classes;
         } else {
             $classes = [
-                'btn'                   => 'Primary',
-                'btn btn--secondary'    => 'Secondary',
-                'btn btn--ghost'        => 'Ghost',
-                'link link--ext'        => 'Link >',
-                'link'                  => 'Link'
+                'btn' => 'Primary',
+                'btn btn--secondary' => 'Secondary',
+                'btn btn--ghost' => 'Ghost',
+                'link link--ext' => 'Link >',
+                'link' => 'Link'
             ];
         }
 
@@ -262,7 +270,8 @@ class CTAField extends Field
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    public function getSettingsHtml() {
+    public function getSettingsHtml()
+    {
         $settings = $this->getSettings();
         $allowedLinkNames = $settings['allowedLinkNames'];
         $linkTypes = [];
@@ -284,10 +293,10 @@ class CTAField extends Field
         foreach (CTA::getInstance()->getLinkTypes() as $linkTypeName => $linkType) {
             $linkTypes[] = array(
                 'displayName' => $linkType->getDisplayName(),
-                'enabled'     => $allTypesAllowed || (is_array($allowedLinkNames) && in_array($linkTypeName, $allowedLinkNames)),
-                'name'        => $linkTypeName,
-                'group'       => $linkType->getDisplayGroup(),
-                'settings'    => $linkType->getSettingsHtml($linkTypeName, $this),
+                'enabled' => $allTypesAllowed || (is_array($allowedLinkNames) && in_array($linkTypeName, $allowedLinkNames)),
+                'name' => $linkTypeName,
+                'group' => $linkType->getDisplayGroup(),
+                'settings' => $linkType->getSettingsHtml($linkTypeName, $this),
             );
 
             $linkNames[$linkTypeName] = $linkType->getDisplayName();
@@ -295,7 +304,7 @@ class CTAField extends Field
         }
 
         asort($linkNames);
-        usort($linkTypes, function($a, $b) {
+        usort($linkTypes, function ($a, $b) {
             return $a['group'] === $b['group']
                 ? strcmp($a['displayName'], $b['displayName'])
                 : strcmp($a['group'], $b['group']);
@@ -303,11 +312,11 @@ class CTAField extends Field
 
         return \Craft::$app->getView()->renderTemplate('cta/_settings', [
             'allTypesAllowed' => $allTypesAllowed,
-            'name'            => 'linkField',
-            'nameNs'          => \Craft::$app->view->namespaceInputId('linkField'),
-            'linkTypes'       => $linkTypes,
-            'linkNames'       => $linkNames,
-            'settings'        => $settings,
+            'name' => 'linkField',
+            'nameNs' => \Craft::$app->view->namespaceInputId('linkField'),
+            'linkTypes' => $linkTypes,
+            'linkNames' => $linkNames,
+            'settings' => $settings,
         ]);
     }
 
@@ -316,7 +325,8 @@ class CTAField extends Field
      * @param ElementInterface $element
      * @return bool
      */
-    public function isValueEmpty($value, ElementInterface $element): bool {
+    public function isValueEmpty($value, ElementInterface $element): bool
+    {
         if ($value instanceof \statikbe\cta\models\CTA) {
             return $value->isEmpty();
         }
@@ -328,7 +338,8 @@ class CTAField extends Field
      * @param string $type
      * @return bool
      */
-    private function isAllowedLinkType($type) {
+    private function isAllowedLinkType($type)
+    {
         $allowedLinkTypes = $this->getAllowedLinkTypes();
         return array_key_exists($type, $allowedLinkTypes);
     }
@@ -337,7 +348,8 @@ class CTAField extends Field
      * @param array $data
      * @return mixed
      */
-    private function getLinkValue(array $data) {
+    private function getLinkValue(array $data)
+    {
         $linkTypes = CTA::getInstance()->getLinkTypes();
         $type = $data['type'];
         if (!array_key_exists($type, $linkTypes)) {
@@ -350,7 +362,8 @@ class CTAField extends Field
     /**
      * @return string
      */
-    static public function displayName(): string {
+    static public function displayName(): string
+    {
         return \Craft::t('cta', 'CTA');
     }
 }
