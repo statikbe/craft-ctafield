@@ -34,7 +34,7 @@ interface LinkTypeInterface
 
     /**
      * @param string $linkTypeName
-     * @param LinkField $field
+     * @param CTAField $field
      * @param Link $value
      * @param ElementInterface $element
      * @return string
@@ -49,7 +49,7 @@ interface LinkTypeInterface
 
     /**
      * @param string $linkTypeName
-     * @param LinkField $field
+     * @param CTAField $field
      * @return string
      */
     public function getSettingsHtml(string $linkTypeName, CTAField $field): string;
@@ -79,7 +79,7 @@ interface LinkTypeInterface
     public function isEmpty(CTA $link): bool;
 
     /**
-     * @param LinkField $field
+     * @param CTAField $field
      * @param Link $link
      * @return array|null
      */

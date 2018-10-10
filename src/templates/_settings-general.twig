@@ -1,8 +1,8 @@
 {% import '_includes/forms' as forms %}
 
 {{ forms.selectField({
-  label: 'Default link type'|t('typedlinkfield'),
-  instructions: 'Select the preselected link type.'|t('typedlinkfield'),
+  label: 'Default link type'|t('cta'),
+  instructions: 'Select the preselected link type.'|t('cta'),
   id: 'defaultLinkName',
   name: 'defaultLinkName',
   options: linkNames,
@@ -10,20 +10,26 @@
 }) }}
 
 {{ forms.textField({
-  label: 'Default link text'|t('typedlinkfield'),
-  instructions: 'Set the default value of the link text.'|t('typedlinkfield'),
+  label: 'Default link text'|t('cta'),
+  instructions: 'Set the default value of the link text.'|t('cta'),
   name: 'defaultText',
   value: settings.defaultText
 }) }}
 
 {{ forms.checkboxField({
-  label: 'Allow custom link text'|t('typedlinkfield'),
+  label: 'Allow custom link text'|t('cta'),
   name: 'allowCustomText',
   checked: settings.allowCustomText
 }) }}
 
 {{ forms.checkboxField({
-  label: 'Allow links to open in new window'|t('typedlinkfield'),
+  label: 'Allow links to open in new window'|t('cta'),
   name: 'allowTarget',
   checked: settings.allowTarget
+}) }}
+
+{{ forms.checkboxField({
+    label: 'Allow class to be defined from the CP'|t('cta'),
+    name: 'allowClass',
+    checked: settings.allowClass ?? true
 }) }}

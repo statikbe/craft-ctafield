@@ -25,6 +25,11 @@ class CTA extends Model
     public $allowTarget;
 
     /**
+     * @var bool
+     */
+    public $allowClass;
+
+    /**
      * @var string
      */
     public $customText;
@@ -114,9 +119,13 @@ class CTA extends Model
             $attr['target'] = $target;
         }
 
-        $class = $this->getClass();
-        if($this->class) {
-            $attr['class'] = $class;
+        d($this);
+
+        if($this->allowClass) {
+            $class = $this->getClass();
+            if($class) {
+                $attr['class'] = $class;
+            }
         }
 
         // If a string is passed, override the text component

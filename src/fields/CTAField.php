@@ -45,6 +45,11 @@ class CTAField extends Field
     public $allowTarget = false;
 
     /**
+     * @var bool
+     */
+    public $allowClass = true;
+
+    /**
      * @var string
      */
     public $class;
@@ -115,6 +120,7 @@ class CTAField extends Field
         $attr = [
             'allowCustomText' => $this->allowCustomText,
             'allowTarget' => $this->allowTarget,
+            'allowClass' => $this->allowClass,
             'defaultText' => $this->defaultText,
             'owner' => $element,
         ];
@@ -134,8 +140,8 @@ class CTAField extends Field
             $attr += [
                 'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
                 'target' => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
+                'class' => $this->allowClass && isset($value['class']) ? $value['class'] : null,
                 'type' => isset($value['type']) ? $value['type'] : null,
-                'class' => $value['class'],
                 'value' => $this->getLinkValue($value)
             ];
 
@@ -150,7 +156,6 @@ class CTAField extends Field
             $attr['type'] = null;
             $attr['value'] = null;
         }
-
         return new \statikbe\cta\models\CTA($attr);
     }
 
