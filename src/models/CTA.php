@@ -119,8 +119,6 @@ class CTA extends Model
             $attr['target'] = $target;
         }
 
-        d($this);
-
         if($this->allowClass) {
             $class = $this->getClass();
             if($class) {
