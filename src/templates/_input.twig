@@ -3,7 +3,7 @@
 {% do view.registerAssetBundle('statikbe\\cta\\utilities\\CpAssetBundle') %}
 
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
-{% set hasSettings = settings.allowCustomText or settings.allowTarget %}
+{% set hasSettings = settings.allowCustomText or settings.allowTarget or settings.allowClass %}
 
 <div class="linkfield{% if hasSettings %} withSettings{% endif %}" id="{{ name }}">
   {% if linkNames|length == 0 %}
@@ -35,6 +35,7 @@
             margin: 0;
           }
         </style>
+        {% if settings.allowClass %}
         <div class="cta__input field">
           <div class="heading">
             <label id="fields-ctaLink-customText-label" for="{{ name~'class' }}">Class</label>
@@ -46,6 +47,7 @@
               value: class
           }) }}
         </div>
+        {% endif %}
         {% if settings.allowCustomText %}
           <div class="cta__input" style="flex-grow: 1;">
           {{ forms.textField({
