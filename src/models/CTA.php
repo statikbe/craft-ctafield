@@ -2,6 +2,7 @@
 
 namespace statikbe\cta\models;
 
+use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
