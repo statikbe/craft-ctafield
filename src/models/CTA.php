@@ -143,6 +143,17 @@ class CTA extends Model
         return Template::raw(Html::tag('a', $text, $attr));
     }
 
+
+    /**
+     * @param null $attributesOrText
+     * @return \Twig_Markup|null
+     * @deprecated in 3.0
+     */
+    public function htmlLink($attributesOrText = null ) {
+        Craft::$app->getDeprecator()->log('cta.htmlLink', 'htmlLink has been deprecated, please use getLink() instead');
+        return $this->getLink($attributesOrText);
+    }
+
     /**
      * @return LinkTypeInterface|null
      */
