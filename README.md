@@ -60,6 +60,15 @@ will be used as the link content.
 }) }}
 ```
 
+To get the CTA as a span (eg to use in clickable blocks), you can use the `getSpan()` function.
+```
+{{ entry.linkField.getSpan({
+  class: 'my-link-class',
+  text: 'Imprint',
+}) }}
+```
+
+
 ## Custom classes
 Add custum classes to the dropdown menu.
 
