@@ -106,6 +106,14 @@ class InputLinkType extends Model implements LinkTypeInterface
             $textFieldOptions['placeholder'] = \Craft::t('cta', $this->placeholder);
         }
 
+        if($this->inputType === 'url') {
+            $textFieldOptions['placeholder'] = 'https://';
+        }
+
+        if($this->inputType === 'email') {
+            $textFieldOptions['placeholder'] = 'test@example.com';
+        }
+
         try {
             return \Craft::$app->view->renderTemplate('cta/_input-input', [
                 'isSelected'       => $isSelected,
