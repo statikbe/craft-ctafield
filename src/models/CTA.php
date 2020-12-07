@@ -141,6 +141,11 @@ class CTA extends Model
             $attr = $attributesOrText + $attr;
         }
 
+
+        if($this->type == 'url' && $this->getTarget()) {
+            $attr['rel'] = 'noopener';
+        }
+        
         return Template::raw(Html::tag('a', $text, $attr));
     }
 
