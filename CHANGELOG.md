@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0 - 2020-12-07
+### Added
+- CTA's can now be rendered as a span ([#2](https://github.com/statikbe/craft3-ctafield/issues/2))
+- Better placeholder for url and e-mail fields ([#3](https://github.com/statikbe/craft3-ctafield/issues/3))
+- CTA's that use a URL and open in a new window now get the rel='noopener' attribute ([#4](https://github.com/statikbe/craft3-ctafield/issues/4))
 
 ## 1.3.1 - 2018-10-26
 ### Added
