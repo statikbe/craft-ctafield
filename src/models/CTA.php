@@ -145,8 +145,45 @@ class CTA extends Model
         if($this->type == 'url' && $this->getTarget()) {
             $attr['rel'] = 'noopener';
         }
-        
+
         return Template::raw(Html::tag('a', $text, $attr));
+    }
+
+    /**
+     * Renders a span tag, to use the CTA in a clickable block.
+     *
+     * @param array|string|null $attributesOrText
+     * @return null|\Twig_Markup
+     */
+    public function getSpan($attributesOrText = null) {
+        $text = $this->getText();
+        $url = $this->getUrl();
+        if (is_null($text) || is_null($url)) {
+            return null;
+        }
+
+        if($this->allowClass) {
+            $class = $this->getClass();
+            if($class) {
+                $attr['class'] = $class;
+            }
+        }
+
+        // If a string is passed, override the text component
+        if (is_string($attributesOrText)) {
+            $text = $attributesOrText;
+
+            // If an array is passed, use it as tag attributes
+        } elseif (is_array($attributesOrText)) {
+            if (array_key_exists('text', $attributesOrText)) {
+                $text = $attributesOrText['text'];
+                unset($attributesOrText['text']);
+            }
+
+            $attr = $attributesOrText + $attr;
+        }
+
+        return Template::raw(Html::tag('span', $text, $attr));
     }
 
 
