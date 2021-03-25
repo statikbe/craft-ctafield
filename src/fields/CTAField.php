@@ -10,6 +10,7 @@
 
 namespace statikbe\cta\fields;
 
+use craft\helpers\ConfigHelper;
 use statikbe\cta\CTA;
 use statikbe\cta\assetbundles\ctafieldfield\CTAFieldFieldAsset;
 
@@ -228,7 +229,7 @@ class CTAField extends Field
         return \Craft::$app->getView()->renderTemplate('cta/_input', [
             'linkInputs' => implode('', $linkInputs),
             'linkNames' => $linkNames,
-            'classes' => $this->getClasses(),
+            'classes' => $this->getClasses($element),
             'class' => $value->class,
             'name' => $this->handle,
             'nameNs' => \Craft::$app->view->namespaceInputId($this->handle),
@@ -253,9 +254,13 @@ class CTAField extends Field
         return $settings;
     }
 
-    public function getClasses()
+    public function getClasses($element)
     {
-        if (CTA::$plugin->getSettings()->classes) {
+        $site = Craft::$app->getSites()->getSiteById($element->siteId);
+
+        if (is_array(ConfigHelper::localizedValue(CTA::$plugin->getSettings()->classes, $site->handle))) {
+            $classes = ConfigHelper::localizedValue(CTA::$plugin->getSettings()->classes, $site->handle);
+        } elseif(CTA::$plugin->getSettings()->classes) {
             $classes = CTA::$plugin->getSettings()->classes;
         } else {
             $classes = [
