@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.1- 2021-03-25
+### Added
+- Config is can now be localized per site ([#5](https://github.com/statikbe/craft3-ctafield/issues/5))
+
+
 ## 1.4.0 - 2020-12-07
 ### Added
 - CTA's can now be rendered as a span ([#2](https://github.com/statikbe/craft3-ctafield/issues/2))
