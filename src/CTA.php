@@ -10,6 +10,7 @@
 
 namespace statikbe\cta;
 
+use craft\base\Model;
 use statikbe\cta\models\ElementLinkType;
 use statikbe\cta\models\InputLinkType;
 use statikbe\cta\models\LinkTypeInterface;
@@ -57,7 +58,7 @@ class CTA extends Plugin
     /**
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public string $schemaVersion = '1.0.0';
 
     // Public Methods
     // =========================================================================
@@ -164,7 +165,7 @@ class CTA extends Plugin
         $event->types[] = LinkField::class;
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): Model
     {
         return new Settings();
     }

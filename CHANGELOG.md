@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0-beta.2 - 2022-05-11
+### Fixed
+- Fixed unknown property error on element select
+
+## 2.0.0-beta.1 - 2022-03-15
+### Added
+- Craft 4 compatibility
+
+
 ## 1.4.1- 2021-03-25
 ### Added
 - Config is can now be localized per site ([#5](https://github.com/statikbe/craft3-ctafield/issues/5))
