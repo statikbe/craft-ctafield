@@ -112,7 +112,7 @@ class CTAField extends Field
      * @param ElementInterface|null $element
      * @return Link
      */
-    public function normalizeValue($value, ElementInterface $element = null)
+    public function normalizeValue($value, ElementInterface $element = null): mixed
     {
         if ($value instanceof \statikbe\cta\models\CTA) {
             return $value;
@@ -280,7 +280,7 @@ class CTAField extends Field
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): string
     {
         $settings = $this->getSettings();
         $allowedLinkNames = $settings['allowedLinkNames'];
