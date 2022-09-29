@@ -112,6 +112,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
 
         $selectFieldOptions = [
             'criteria'        => $criteria,
+            'showSiteMenu'    => true,
             'elementType'     => $this->elementType,
             'elements'        => $elements,
             'id'              => $field->handle . '-' . $linkTypeName,
