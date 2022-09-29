@@ -105,11 +105,16 @@ class ElementLinkType extends Model implements LinkTypeInterface
         ];
 
         try {
-            $criteria['siteId'] = $this->getTargetSiteId($element);
+            if(isset($settings['siteId']) && $settings['siteId'] != '*') {
+                $criteria['siteId'] = $settings['siteId'] ;
+            } else {
+                $criteria['siteId'] = $this->getTargetSiteId($element);
+            }
         } catch (\Exception $e) {}
 
         $selectFieldOptions = [
             'criteria'        => $criteria,
+            'showSiteMenu'    => true,
             'elementType'     => $this->elementType,
             'elements'        => $elements,
             'id'              => $field->handle . '-' . $linkTypeName,
@@ -127,6 +132,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
                 'selectFieldOptions' => $selectFieldOptions,
             ]);
         } catch (\Throwable $exception) {
+
             return Html::tag('p', \Craft::t(
                 'cta',
                 'Error: Could not render the template for the field `{name}`.',
@@ -172,6 +178,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
                 'sources'      => $this->getSources(),
             ]);
         } catch (\Throwable $exception) {
+            dd($exception->getMessage());
             return Html::tag('p', \Craft::t(
                 'cta',
                 'Error: Could not render the template for the field `{name}`.',
@@ -186,7 +193,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
     protected function getSources() {
         $elementType = $this->elementType;
         $options = array();
-        foreach ($elementType::sources() as $source) {
+        foreach ($elementType::sources('settings') as $source) {
             if (array_key_exists('key', $source) && $source['key'] !== '*') {
                 $options[$source['key']] = $source['label'];
             }
