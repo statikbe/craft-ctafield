@@ -68,13 +68,15 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @return null|ElementInterface
      */
     public function getElement(CTA $link) {
+
         if ($this->isEmpty($link)) {
             return null;
         }
 
+        $pluginSettings = \statikbe\cta\CTA::getInstance()->getSettings();
         $query = [
             'id' => $link->value,
-            'site' => $link->getOwnerSite(),
+            'site' => $pluginSettings->crossSiteLinking ? '*' : $link->getOwnerSite(),
         ];
 
         if (\Craft::$app->request->getIsCpRequest()) {

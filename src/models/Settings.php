@@ -27,4 +27,6 @@ class Settings extends Model
 
     public $classes = [];
 
+    public bool $crossSiteLinking = false;
+
 }
