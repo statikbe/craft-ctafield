@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 2.2.0 - 2023-07-13
+### Added
+- Added ``crossSiteLinking`` setting to allow linking between sites.s
+
+
 ## 2.1.0 -  2022-09-29
 ### Added
 - Added SiteMenu to element modal, to enable linking across sites

@@ -68,8 +68,8 @@ To get the CTA as a span (eg to use in clickable blocks), you can use the `getSp
 }) }}
 ```
 
-
-## Custom classes
+## Configuration
+### Custom classes
 Add custum classes to the dropdown menu.
 
 1. Add cta.php to /config
@@ -85,6 +85,16 @@ return [
 ];
 ```
 
+### Linking between sites
+By default, linking to entries from another site is not enabled. To make this work, you can use this config setting:
+
+```
+<?php
+
+return [
+    'crossSiteLinking' => true
+];
+```
 
 ## Credits
 
