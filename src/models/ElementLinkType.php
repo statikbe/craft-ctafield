@@ -3,6 +3,7 @@
 namespace statikbe\cta\models;
 
 use craft\base\ElementInterface;
+use craft\elements\conditions\ElementCondition;
 use craft\helpers\Html;
 use statikbe\cta\fields\CTAField;
 use yii\base\Model;
@@ -89,15 +90,14 @@ class ElementLinkType extends Model implements LinkTypeInterface
         return $elementType::findOne($query);
     }
 
-    /**
-     * @param string $linkTypeName
-     * @param LinkField $field
-     * @param Link $value
-     * @param ElementInterface $element
-     * @return string
-     */
     public function getInputHtml(string $linkTypeName, CTAField $field, CTA $value, ElementInterface $element): string {
         $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
+
+        $selectionCondition = $field->getSelectionCondition();
+        if ($selectionCondition instanceof ElementCondition) {
+            $selectionCondition->referenceElement = $element;
+        }
+
         $sources    = $settings['sources'];
         $isSelected = $value->type === $linkTypeName;
         $elements   = $isSelected ? array_filter([$this->getElement($value)]) : null;
@@ -118,6 +118,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
             'criteria'        => $criteria,
             'showSiteMenu'    => true,
             'elementType'     => $this->elementType,
+            'condition'       => $selectionCondition,
             'elements'        => $elements,
             'id'              => $field->handle . '-' . $linkTypeName,
             'limit'           => 1,

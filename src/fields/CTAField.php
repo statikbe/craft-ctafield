@@ -10,18 +10,18 @@
 
 namespace statikbe\cta\fields;
 
+use craft\base\conditions\ConditionInterface;
+use craft\elements\Entry;
+use craft\elements\conditions\ElementConditionInterface;
 use craft\helpers\ConfigHelper;
+use craft\helpers\Cp;
 use statikbe\cta\CTA;
-use statikbe\cta\assetbundles\ctafieldfield\CTAFieldFieldAsset;
-
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
-use craft\helpers\Db;
 use statikbe\cta\models\LinkTypeInterface;
 use statikbe\cta\validators\LinkFieldValidator;
 use yii\db\Schema;
-use craft\helpers\Json;
 
 /**
  * @author    Statik
@@ -75,6 +75,13 @@ class CTAField extends Field
      */
     public $typeSettings = array();
 
+    /**
+     * @var ElementConditionInterface|array|null
+     * @phpstan-var ElementConditionInterface|array{class:class-string<ElementConditionInterface>}|null
+     * @see getSelectionCondition()
+     * @see setSelectionCondition()
+     */
+    private array|null|ElementConditionInterface $_selectionCondition = null;
 
     /**
      * @param bool $isNew
@@ -137,7 +144,7 @@ class CTAField extends Field
             );
 
             // If it is an array and the field `isCpFormData` is set, we are saving a cp form
-        } else if (is_array($value) && isset($value['isCpFormData'])) {
+        } elseif (is_array($value) && isset($value['isCpFormData'])) {
             $attr += [
                 'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
                 'target' => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
@@ -224,7 +231,6 @@ class CTAField extends Field
         }
 
         asort($linkNames);
-
 
         return \Craft::$app->getView()->renderTemplate('cta/_input', [
             'linkInputs' => implode('', $linkInputs),
@@ -320,14 +326,46 @@ class CTAField extends Field
                 : strcmp($a['group'], $b['group']);
         });
 
+
+        $selectionCondition = $this->getSelectionCondition() ?? $this->createSelectionCondition();
+        if ($selectionCondition) {
+            $selectionCondition->mainTag = 'div';
+            $selectionCondition->id = 'selection-condition';
+            $selectionCondition->name = 'selectionCondition';
+            $selectionCondition->forProjectConfig = true;
+            $selectionCondition->queryParams[] = 'site';
+            $selectionCondition->queryParams[] = 'status';
+
+            $selectionConditionHtml = Cp::fieldHtml($selectionCondition->getBuilderHtml(), [
+                'label' => Craft::t('app', 'Selectable {type} Condition', [
+                    'type' => Entry::pluralDisplayName(),
+                ]),
+                'instructions' => Craft::t('app', 'Only allow {type} to be selected if they match the following rules:', [
+                    'type' => Entry::pluralLowerDisplayName(),
+                ]),
+            ]);
+        }
+
         return \Craft::$app->getView()->renderTemplate('cta/_settings', [
             'allTypesAllowed' => $allTypesAllowed,
             'name' => 'linkField',
+            'selectionCondition' => $selectionConditionHtml ?? null,
             'nameNs' => \Craft::$app->view->namespaceInputId('linkField'),
             'linkTypes' => $linkTypes,
             'linkNames' => $linkNames,
             'settings' => $settings,
         ]);
+    }
+
+    public function getSettings(): array
+    {
+        $settings = parent::getSettings();
+
+        if ($selectionCondition = $this->getSelectionCondition()) {
+            $settings['selectionCondition'] = $selectionCondition->getConfig();
+        }
+
+        return $settings;
     }
 
     /**
@@ -342,6 +380,33 @@ class CTAField extends Field
         }
 
         return true;
+    }
+
+    public function getSelectionCondition(): ?ElementConditionInterface
+    {
+        if ($this->_selectionCondition !== null && !$this->_selectionCondition instanceof ConditionInterface) {
+            $this->_selectionCondition = Craft::$app->getConditions()->createCondition($this->_selectionCondition);
+        }
+
+        return $this->_selectionCondition;
+    }
+
+    public function setSelectionCondition(mixed $condition): void
+    {
+        if ($condition instanceof ConditionInterface && !$condition->getConditionRules()) {
+            $condition = null;
+        }
+
+        // Don't instantiate it unless we actually end up needing it.
+        // Avoids an infinite recursion bug (ElementCondition::conditionRuleTypes() => getAllFields() => setSelectionCondition() => ...)
+        $this->_selectionCondition = $condition;
+    }
+
+    protected function createSelectionCondition(): ?ElementConditionInterface
+    {
+        $condition = Entry::createCondition();
+        $condition->queryParams = ['section', 'sectionId'];
+        return $condition;
     }
 
     /**
@@ -372,7 +437,7 @@ class CTAField extends Field
     /**
      * @return string
      */
-    static public function displayName(): string
+    public static function displayName(): string
     {
         return \Craft::t('cta', 'CTA');
     }

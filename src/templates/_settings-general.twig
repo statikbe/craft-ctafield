@@ -16,6 +16,8 @@
   value: settings.defaultText
 }) }}
 
+{{ (selectionCondition ?? false) ? selectionCondition|raw }}
+
 {{ forms.checkboxField({
   label: 'Allow custom link text'|t('cta'),
   name: 'allowCustomText',
