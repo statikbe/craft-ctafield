@@ -327,29 +327,9 @@ class CTAField extends Field
         });
 
 
-        $selectionCondition = $this->getSelectionCondition() ?? $this->createSelectionCondition();
-        if ($selectionCondition) {
-            $selectionCondition->mainTag = 'div';
-            $selectionCondition->id = 'selection-condition';
-            $selectionCondition->name = 'selectionCondition';
-            $selectionCondition->forProjectConfig = true;
-            $selectionCondition->queryParams[] = 'site';
-            $selectionCondition->queryParams[] = 'status';
-
-            $selectionConditionHtml = Cp::fieldHtml($selectionCondition->getBuilderHtml(), [
-                'label' => Craft::t('app', 'Selectable {type} Condition', [
-                    'type' => Entry::pluralDisplayName(),
-                ]),
-                'instructions' => Craft::t('app', 'Only allow {type} to be selected if they match the following rules:', [
-                    'type' => Entry::pluralLowerDisplayName(),
-                ]),
-            ]);
-        }
-
         return \Craft::$app->getView()->renderTemplate('cta/_settings', [
             'allTypesAllowed' => $allTypesAllowed,
             'name' => 'linkField',
-            'selectionCondition' => $selectionConditionHtml ?? null,
             'nameNs' => \Craft::$app->view->namespaceInputId('linkField'),
             'linkTypes' => $linkTypes,
             'linkNames' => $linkNames,
@@ -402,7 +382,7 @@ class CTAField extends Field
         $this->_selectionCondition = $condition;
     }
 
-    protected function createSelectionCondition(): ?ElementConditionInterface
+    public function createSelectionCondition(): ?ElementConditionInterface
     {
         $condition = Entry::createCondition();
         $condition->queryParams = ['section', 'sectionId'];
