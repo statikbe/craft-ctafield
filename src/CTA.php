@@ -14,16 +14,12 @@ use craft\base\Model;
 use statikbe\cta\models\ElementLinkType;
 use statikbe\cta\models\InputLinkType;
 use statikbe\cta\models\LinkTypeInterface;
-use statikbe\cta\variables\CTAVariable;
 use statikbe\cta\models\Settings;
 use statikbe\cta\fields\CTAField as CTAFieldField;
 
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\services\Fields;
-use craft\web\twig\variables\CraftVariable;
 use craft\events\RegisterComponentTypesEvent;
 
 use yii\base\Event;
@@ -38,6 +34,12 @@ use yii\base\Event;
  */
 class CTA extends Plugin
 {
+    public const ENTRY = 'entry';
+    public const EMAIL = 'email';
+    public const TEL = 'tel';
+    public const URL = 'url';
+    public const CATEGORY = 'category';
+    public const ASSET= 'asset';
 
 
     // Static Properties
@@ -110,30 +112,30 @@ class CTA extends Plugin
      */
     private function createDefaultLinkTypes() {
         $result = [
-            'url' => new InputLinkType([
+            self::URL => new InputLinkType([
                 'displayName'  => 'Url',
                 'displayGroup' => 'Input fields',
                 'inputType'    => 'url'
             ]),
-            'email' => new InputLinkType([
+            self::EMAIL => new InputLinkType([
                 'displayName'  => 'Mail',
                 'displayGroup' => 'Input fields',
                 'inputType'    => 'email'
             ]),
-            'tel' => new InputLinkType([
+            self::TEL => new InputLinkType([
                 'displayName'  => 'Telephone',
                 'displayGroup' => 'Input fields',
                 'inputType'    => 'tel'
             ]),
-            'entry' => new ElementLinkType([
+            self::ENTRY => new ElementLinkType([
                 'displayGroup' => 'Craft CMS',
                 'elementType'  => \craft\elements\Entry::class
             ]),
-            'asset' => new ElementLinkType([
+            self::ASSET => new ElementLinkType([
                 'displayGroup' => 'Craft CMS',
                 'elementType'  => \craft\elements\Asset::class,
             ]),
-            'category' => new ElementLinkType([
+            self::CATEGORY => new ElementLinkType([
                 'displayGroup' => 'Craft CMS',
                 'elementType'  => \craft\elements\Category::class
             ]),
@@ -170,5 +172,5 @@ class CTA extends Plugin
         return new Settings();
     }
 
-   
+
 }

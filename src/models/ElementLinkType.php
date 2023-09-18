@@ -2,7 +2,11 @@
 
 namespace statikbe\cta\models;
 
+use Craft;
 use craft\base\ElementInterface;
+use craft\elements\Entry;
+use craft\elements\conditions\ElementCondition;
+use craft\helpers\Cp;
 use craft\helpers\Html;
 use statikbe\cta\fields\CTAField;
 use yii\base\Model;
@@ -29,7 +33,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param string|array $elementType
      * @param array $options
      */
-    public function __construct($elementType, array $options = []) {
+    public function __construct($elementType, array $options = [])
+    {
         if (is_array($elementType)) {
             $options = $elementType;
         } else {
@@ -42,7 +47,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
     /**
      * @return array
      */
-    public function getDefaultSettings(): array {
+    public function getDefaultSettings(): array
+    {
         return [
             'sources' => '*',
         ];
@@ -51,7 +57,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
     /**
      * @return string
      */
-    public function getDisplayName(): string {
+    public function getDisplayName(): string
+    {
         $elementType = $this->elementType;
         return $elementType::displayName();
     }
@@ -59,15 +66,13 @@ class ElementLinkType extends Model implements LinkTypeInterface
     /**
      * @return string
      */
-    public function getDisplayGroup(): string {
+    public function getDisplayGroup(): string
+    {
         return \Craft::t('cta', $this->displayGroup);
     }
 
-    /**
-     * @param Link $link
-     * @return null|ElementInterface
-     */
-    public function getElement(CTA $link) {
+    public function getElement(CTA $link)
+    {
 
         if ($this->isEmpty($link)) {
             return null;
@@ -89,15 +94,15 @@ class ElementLinkType extends Model implements LinkTypeInterface
         return $elementType::findOne($query);
     }
 
-    /**
-     * @param string $linkTypeName
-     * @param LinkField $field
-     * @param Link $value
-     * @param ElementInterface $element
-     * @return string
-     */
-    public function getInputHtml(string $linkTypeName, CTAField $field, CTA $value, ElementInterface $element): string {
+    public function getInputHtml(string $linkTypeName, CTAField $field, CTA $value, ElementInterface $element): string
+    {
         $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
+
+        $selectionCondition = $field->getSelectionCondition();
+        if ($selectionCondition instanceof ElementCondition) {
+            $selectionCondition->referenceElement = $element;
+        }
+
         $sources    = $settings['sources'];
         $isSelected = $value->type === $linkTypeName;
         $elements   = $isSelected ? array_filter([$this->getElement($value)]) : null;
@@ -112,12 +117,14 @@ class ElementLinkType extends Model implements LinkTypeInterface
             } else {
                 $criteria['siteId'] = $this->getTargetSiteId($element);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $selectFieldOptions = [
             'criteria'        => $criteria,
             'showSiteMenu'    => true,
             'elementType'     => $this->elementType,
+            'condition'       => $selectionCondition,
             'elements'        => $elements,
             'id'              => $field->handle . '-' . $linkTypeName,
             'limit'           => 1,
@@ -148,7 +155,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @return int
      * @throws \craft\errors\SiteNotFoundException
      */
-    protected function getTargetSiteId(ElementInterface $element = null): int {
+    protected function getTargetSiteId(ElementInterface $element = null): int
+    {
         if (\Craft::$app->getIsMultiSite()) {
             if ($element !== null) {
                 return $element->siteId;
@@ -162,19 +170,40 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param mixed $value
      * @return mixed
      */
-    public function getLinkValue($value) {
+    public function getLinkValue($value)
+    {
         return is_array($value) ? $value[0] : null;
     }
 
-    /**
-     * @param string $linkTypeName
-     * @param LinkField $field
-     * @return string
-     */
-    public function getSettingsHtml(string $linkTypeName, CTAField $field): string {
+    public function getSettingsHtml(string $linkTypeName, CTAField $field): string
+    {
         try {
+
+            if ($linkTypeName === \statikbe\cta\CTA::ENTRY) {
+                $selectionCondition = $field->getSelectionCondition() ?? $field->createSelectionCondition();
+                if ($selectionCondition) {
+                    $selectionCondition->mainTag = 'div';
+                    $selectionCondition->id = 'selection-condition';
+                    $selectionCondition->name = 'selectionCondition';
+                    $selectionCondition->forProjectConfig = true;
+                    $selectionCondition->queryParams[] = 'site';
+                    $selectionCondition->queryParams[] = 'status';
+
+                    $selectionConditionHtml = Cp::fieldHtml($selectionCondition->getBuilderHtml(), [
+                        'label' => Craft::t('app', 'Selectable {type} Condition', [
+                            'type' => Entry::pluralDisplayName(),
+                        ]),
+                        'instructions' => Craft::t('app', 'Only allow {type} to be selected if they match the following rules:', [
+                            'type' => Entry::pluralLowerDisplayName(),
+                        ]),
+                    ]);
+                }
+            }
+
+
             return \Craft::$app->view->renderTemplate('cta/_settings-element', [
                 'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
+                'selectionCondition' => $selectionConditionHtml ?? null,
                 'elementName'  => $this->getDisplayName(),
                 'linkTypeName' => $linkTypeName,
                 'sources'      => $this->getSources(),
@@ -192,7 +221,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
     /**
      * @return array
      */
-    protected function getSources() {
+    protected function getSources()
+    {
         $elementType = $this->elementType;
         $options = array();
         foreach ($elementType::sources('settings') as $source) {
@@ -208,7 +238,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param Link $link
      * @return null|string
      */
-    public function getText(CTA $link) {
+    public function getText(CTA $link)
+    {
         $element = $this->getElement($link);
         if (is_null($element)) {
             return null;
@@ -221,7 +252,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param Link $link
      * @return null|string
      */
-    public function getUrl(CTA $link) {
+    public function getUrl(CTA $link)
+    {
         $element = $this->getElement($link);
         if (is_null($element)) {
             return null;
@@ -234,7 +266,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param Link $link
      * @return bool
      */
-    public function hasElement(CTA $link): bool {
+    public function hasElement(CTA $link): bool
+    {
         $element = $this->getElement($link);
         return !is_null($element);
     }
@@ -243,7 +276,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param Link $link
      * @return bool
      */
-    public function isEmpty(CTA $link): bool {
+    public function isEmpty(CTA $link): bool
+    {
         if (is_numeric($link->value)) {
             return $link->value <= 0;
         }
@@ -256,7 +290,8 @@ class ElementLinkType extends Model implements LinkTypeInterface
      * @param Link $link
      * @return array|null
      */
-    public function validateValue(CTAField $field, CTA $link) {
+    public function validateValue(CTAField $field, CTA $link)
+    {
         return null;
     }
 }
