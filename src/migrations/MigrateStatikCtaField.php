@@ -33,6 +33,14 @@ class MigrateStatikCtaField extends PluginFieldMigration
         'craftCommerce-product' => linkTypes\Product::class,
     ];
 
+    public array $defaultTypes = [
+        'entry',
+        'asset',
+        'email',
+        'url',
+        'phone'
+    ];
+
     public string $oldFieldTypeClass = CTAField::class;
     public bool $resaveFields = false;
 
@@ -57,7 +65,14 @@ class MigrateStatikCtaField extends PluginFieldMigration
             $enableTitle = $settings['enableTitle'] ?? true;
 
             $types = [];
-            foreach (($settings['allowedLinkNames'] ?? []) as $key => $type) {
+
+            if($settings['allowedLinkNames'] === '*') {
+                $enabledTypes = $this->defaultTypes;
+            } else {
+                $enabledTypes = $settings['allowedLinkNames'];
+            }
+
+            foreach (($enabledTypes ?? []) as $key => $type) {
                 $linkTypeClass = $this->getLinkType($type);
                 if (!$linkTypeClass) {
                     continue;
