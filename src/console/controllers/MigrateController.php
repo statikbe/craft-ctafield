@@ -28,14 +28,22 @@ class MigrateController extends Controller
 
     private function _migrate(string $migrationClass): int
     {
-        if (!Craft::$app->getPlugins()->isPluginInstalled('hyper') || !Craft::$app->getPlugins()->isPluginEnabled('hyper')) {
-            $this->stderr("Hyper not installed, or not enabled in Craft. Please fix this before proceeding" . PHP_EOL, Console::FG_RED);
+        if (!Craft::$app->getPlugins()->isPluginInstalled('hyper')) {
+            $this->stderr("Hyper not installed. Please fix this before proceeding" . PHP_EOL, Console::FG_RED);
             return ExitCode::CANTCREAT;
         }
 
+        if(!Craft::$app->getPlugins()->isPluginEnabled('hyper')) {
+            Craft::$app->getPlugins()->enablePlugin('hyper');
+        }
+
         if (!Craft::$app->getPlugins()->isPluginInstalled('config-values-field') || !Craft::$app->getPlugins()->isPluginEnabled('config-values-field')) {
-            $this->stderr("Config Values Field not installed, or not enabled in Craft. Please fix this before proceeding" . PHP_EOL, Console::FG_RED);
+            $this->stderr("Config Values Field not installed. Please fix this before proceeding" . PHP_EOL, Console::FG_RED);
             return ExitCode::CANTCREAT;
+        }
+
+        if(!Craft::$app->getPlugins()->isPluginEnabled('config-values-field')) {
+            Craft::$app->getPlugins()->enablePlugin('config-values-field');
         }
 
         if (!Craft::$app->getFields()->getFieldByHandle('linkClasses')) {
