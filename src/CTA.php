@@ -10,19 +10,19 @@
 
 namespace statikbe\cta;
 
+use Craft;
 use craft\base\Model;
+use craft\base\Plugin;
+use craft\events\RegisterComponentTypesEvent;
+use craft\services\Fields;
+use statikbe\cta\fields\CTAField as CTAFieldField;
 use statikbe\cta\models\ElementLinkType;
 use statikbe\cta\models\InputLinkType;
 use statikbe\cta\models\LinkTypeInterface;
 use statikbe\cta\models\Settings;
-use statikbe\cta\fields\CTAField as CTAFieldField;
-
-use Craft;
-use craft\base\Plugin;
-use craft\services\Fields;
-use craft\events\RegisterComponentTypesEvent;
-
 use yii\base\Event;
+use yii\console\Application as ConsoleApplication;
+
 
 /**
  * Class CTA
@@ -72,6 +72,10 @@ class CTA extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+
+        if (Craft::$app instanceof ConsoleApplication) {
+            $this->controllerNamespace = 'statikbe\cta\console\controllers';
+        }
 
         Event::on(
             Fields::class,
