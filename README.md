@@ -4,6 +4,22 @@
 
 This plugin requires Craft CMS 3.0.0 or later.
 
+
+## Migrating to [verbb/hyper](https://github.com/verbb/hyper)
+In an effort to phase out the usage of this plugin, we've added 2 console commands to migration the fields and their content to [Hyper](https://github.com/verbb/hyper).
+
+These are the steps you should follow:
+- Install hyper<br> ``ddev composer require "verbb/hyper" -w && ddev exec php craft plugin/install hyper``
+- Install Config Values Field <br> ``ddev composer require "statikbe/craft-config-values" -w && ddev exec php craft plugin/install config-values-field``
+- Resave and check your supertable tables (visit `/admin/super-table/settings` and click both buttons)
+
+> [!Caution]  
+> If supertable is missing tables/columns, or entire fields are marked as missing - please fix that first before proceeding.
+
+- Migrate field settings.<br> ``ddev craft cta/migrate/statik-cta-field`` <br> This will transform all your CTA fields to Hyper fields and update their project config files.
+- Migratie field content.<br> ``ddev craft cta/migrate/statik-cta-content`` <br> You'll have to run this on each environment, but only **after** you ran the fields command or you deployed the changes.
+
+
 ## Installation
 
 To install the plugin, follow these instructions.
