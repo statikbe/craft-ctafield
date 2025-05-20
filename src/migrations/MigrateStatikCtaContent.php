@@ -28,8 +28,10 @@ class MigrateStatikCtaContent extends PluginContentMigration
         'email' => linkTypes\Email::class,
         'entry' => linkTypes\Entry::class,
         'phone' => linkTypes\Phone::class,
+        'tel' => linkTypes\Phone::class,
         'product' => linkTypes\Product::class,
         'url' => linkTypes\Url::class,
+        'custom' => linkTypes\Url::class,
     ];
 
     public string $oldFieldTypeClass = CTAField::class;
