@@ -27,6 +27,7 @@ class MigrateStatikCtaContent extends PluginContentMigration
         'category' => linkTypes\Category::class,
         'email' => linkTypes\Email::class,
         'entry' => linkTypes\Entry::class,
+        'phone' => linkTypes\Phone::class,
         'tel' => linkTypes\Phone::class,
         'product' => linkTypes\Product::class,
         'url' => linkTypes\Url::class,
