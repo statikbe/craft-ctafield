@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.3.1 - 2025-05-20
+### Added
+- Content migration of 'custom' field type to Hyper 'url' field type
+
+### Fixed
+- Migrate phone field type content correctly
+
+
 ## 2.3.0 - 2023-09-18
 ### Added
 - Add feature to create a selection condition for the entry chooser in the CTA
