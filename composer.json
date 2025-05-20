@@ -2,7 +2,7 @@
     "name": "statikbe/craft-cta-field",
     "description": "Call to action & link fields made easy",
     "type": "craft-plugin",
-    "version": "2.4.0",
+    "version": "2.4.1",
     "keywords": [
         "craft",
         "cms",
