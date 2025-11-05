@@ -2,17 +2,10 @@
 
 namespace statikbe\cta\migrations;
 
-use Craft;
-use craft\db\Query;
-use craft\fieldlayoutelements\CustomField;
-use craft\helpers\Db;
-use craft\helpers\ElementHelper;
-use craft\helpers\Json;
 use statikbe\cta\fields\CTAField;
 use verbb\hyper\base\ElementLink;
 use verbb\hyper\fields\HyperField;
 use verbb\hyper\links as linkTypes;
-
 use craft\helpers\Console;
 use craft\helpers\StringHelper;
 
@@ -72,6 +65,11 @@ class MigrateStatikCtaContent extends PluginContentMigration
         $link->fields = [
             'linkClasses' =>$oldSettings['class'] ?? null
         ];
+
+        if ($link instanceof ElementLink) {
+            $link->linkSiteId = $oldSettings['siteId'] ?? null;
+        }
+
         return [$link->getSerializedValues()];
     }
 }
