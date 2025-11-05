@@ -50,14 +50,16 @@ class PluginContentMigration extends PluginMigration
                 // Handle global field content
                 if ($field->context === 'global') {
                     $content = (new Query())
-                        ->select([$column, 'id', 'elementId'])
+                        ->select([$column, 'id', 'elementId', 'siteId'])
                         ->from('{{%content}}')
                         ->where(['not', [$column => null]])
                         ->andWhere(['not', [$column => '']])
                         ->all();
 
                     foreach ($content as $row) {
-                        $settings = $this->convertModel($field, Json::decode($row[$column]));
+                        $rowColumnData = Json::decode($row[$column]);
+                        $rowColumnData['siteId'] = $row['siteId'] ?? null;
+                        $settings = $this->convertModel($field, $rowColumnData);
 
 
                         if ($settings) {
@@ -94,18 +96,20 @@ class PluginContentMigration extends PluginMigration
                             $column = ElementHelper::fieldColumn($field->columnPrefix, $matrixBlockTypeHandle . '_' . $field->handle, $field->columnSuffix);
 
                             $content = (new Query())
-                                ->select([$column, 'id', 'elementId'])
+                                ->select([$column, 'id', 'elementId', 'siteId'])
                                 ->from($matrixField->contentTable)
                                 ->where(['not', [$column => null]])
                                 ->andWhere(['not', [$column => '']])
                                 ->all();
 
                             foreach ($content as $row) {
-                                $settings = $this->convertModel($field, Json::decode($row[$column]));
-                                
+                                $rowColumnData = Json::decode($row[$column]);
+                                $rowColumnData['siteId'] = $row['siteId'] ?? null;
+                                $settings = $this->convertModel($field, $rowColumnData);
+
                                 if ($settings) {
                                     Db::update($matrixField->contentTable, [$column => Json::encode($settings)], ['id' => $row['id']], [], true, $this->db);
-                                
+
                                     $this->stdout('    > Migrated “' . $field->handle . ':' . $matrixBlockTypeHandle . '” Matrix content #' . $row['id'] . ' for element #' . $row['elementId'], Console::FG_GREEN);
                                 } else {
                                     // Null model is okay, that's just an empty field content
@@ -135,18 +139,20 @@ class PluginContentMigration extends PluginMigration
                         $column = ElementHelper::fieldColumn($field->columnPrefix, $field->handle, $field->columnSuffix);
 
                         $content = (new Query())
-                            ->select([$column, 'id', 'elementId'])
+                            ->select([$column, 'id', 'elementId', 'siteId'])
                             ->from($superTableField->contentTable)
                             ->where(['not', [$column => null]])
                             ->andWhere(['not', [$column => '']])
                             ->all();
 
                         foreach ($content as $row) {
-                            $settings = $this->convertModel($field, Json::decode($row[$column]));
+                            $rowColumnData = Json::decode($row[$column]);
+                            $rowColumnData['siteId'] = $row['siteId'] ?? null;
+                            $settings = $this->convertModel($field, $rowColumnData);
 
                             if ($settings) {
                                 Db::update($superTableField->contentTable, [$column => Json::encode($settings)], ['id' => $row['id']], [], true, $this->db);
-                            
+
                                 $this->stdout('    > Migrated “' . $field->handle . '” Super Table content #' . $row['id'] . ' for element #' . $row['elementId'], Console::FG_GREEN);
                             } else {
                                 // Null model is okay, that's just an empty field content
